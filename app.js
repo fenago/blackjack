@@ -631,7 +631,8 @@
   el.insNo.addEventListener('click', () => answerInsurance(false));
 
   document.addEventListener('keydown', (e) => {
-    if (!started) return;
+    if (!started || document.getElementById('view-table').hidden) return;
+    if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
     if (e.metaKey || e.ctrlKey || e.altKey) return;
     if (e.target instanceof HTMLButtonElement && (e.key === 'Enter' || e.key === ' ')) return;
     const key = e.key.toLowerCase();
@@ -666,5 +667,5 @@
 
   function stop() { started = false; }
 
-  window.Blackjack = { start, stop };
+  window.Blackjack = { start, stop, getBank: () => state.bank };
 })();

@@ -98,30 +98,71 @@
   }
 
   let currentUserId = null;
+  let googleAvatar = '';
 
-  function showSignedIn(user) {
+  function partOfDay() {
+    const hour = new Date().getHours();
+    return hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
+  }
+
+  // Greeting text; offers a shortcut to the Profile tab until a profile exists.
+  function setGreeting(firstName, hasProfile) {
+    const strong = document.createElement('strong');
+    strong.textContent = `${partOfDay()}, ${firstName}!`;
+    el.greetingText.replaceChildren(strong);
+    if (hasProfile) {
+      el.greetingText.append(' Welcome back to the table — place your bet to begin.');
+    } else {
+      el.greetingText.append(' Welcome to the table. ');
+      const link = document.createElement('button');
+      link.type = 'button';
+      link.className = 'link-btn';
+      link.textContent = 'Create your profile →';
+      link.addEventListener('click', () => { el.greeting.hidden = true; window.Profile.show(); });
+      el.greetingText.append(link);
+    }
+  }
+
+  function applyIdentity(name, avatar) {
+    el.userName.textContent = name;
+    setAvatar(el.avatar, avatar, name);
+    setAvatar(el.greetingAvatar, avatar, name);
+  }
+
+  window.Profile.onSave((p, { created }) => {
+    applyIdentity(p.display_name, p.avatar_url || googleAvatar);
+    if (created) {
+      setGreeting(p.display_name.split(' ')[0], true);
+      el.greeting.hidden = true;
+    }
+  });
+
+  async function showSignedIn(user) {
     if (currentUserId === user.id) return;
     const isNewArrival = currentUserId === null;
     currentUserId = user.id;
     const { name, firstName, avatar } = profile(user);
+    googleAvatar = avatar;
 
-    el.userName.textContent = name;
-    setAvatar(el.avatar, avatar, name);
-    setAvatar(el.greetingAvatar, avatar, name);
-
-    const hour = new Date().getHours();
-    const partOfDay = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
-    el.greetingText.innerHTML = '';
-    const strong = document.createElement('strong');
-    strong.textContent = `${partOfDay}, ${firstName}!`;
-    el.greetingText.append(strong, document.createTextNode(' Welcome to the table — place your bet to begin.'));
+    applyIdentity(name, avatar);
+    setGreeting(firstName, true);
 
     el.login.hidden = true;
     el.app.hidden = false;
     el.user.hidden = false;
-    el.greeting.hidden = !isNewArrival;
+    el.greeting.hidden = true;
 
     window.Blackjack.start(user.id);
+
+    const saved = await window.Profile.load(client, user, { name, avatar });
+    if (currentUserId !== user.id) return;
+    if (saved) {
+      applyIdentity(saved.display_name, saved.avatar_url || avatar);
+      setGreeting(saved.display_name.split(' ')[0], true);
+    } else if (saved === null) {
+      setGreeting(firstName, false); // signed in but no profile yet
+    }
+    el.greeting.hidden = !isNewArrival;
   }
 
   function showSignedOut() {
@@ -132,6 +173,7 @@
     el.login.hidden = false;
     el.loginBtn.disabled = false;
     window.Blackjack.stop();
+    window.Profile.clear();
   }
 
   client.auth.onAuthStateChange((_event, session) => {

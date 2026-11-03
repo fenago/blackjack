@@ -30,6 +30,10 @@
   <div id="app" class="app" hidden>
   <header class="topbar">
     <h1>Blackjack</h1>
+    <nav class="tabs" aria-label="Sections">
+      <button class="tab" id="tab-table" type="button" data-view="table" aria-current="page">Table</button>
+      <button class="tab" id="tab-profile" type="button" data-view="profile">Profile<span id="tab-profile-dot" class="tab-dot" hidden aria-label="(not set up)"></span></button>
+    </nav>
     <div class="stats">
       <div class="stat"><span class="label">Bank</span><span id="bank" class="value">$1,000</span></div>
       <div class="stat"><span class="label">Shoe</span><span id="shoe" class="value">—</span></div>
@@ -47,6 +51,7 @@
     <button id="greeting-close" class="greeting-close" type="button" aria-label="Dismiss greeting">×</button>
   </div>
 
+  <div id="view-table" class="view">
   <main class="table">
     <section class="area dealer-area" aria-label="Dealer">
       <div class="area-head">
@@ -111,9 +116,90 @@
   </footer>
   </div>
 
+  <!-- Profile -->
+  <main id="view-profile" class="view profile-view" hidden>
+    <div id="profile-loading" class="profile-panel profile-status">Loading your profile…</div>
+
+    <div id="profile-error" class="profile-panel profile-status" role="alert" hidden></div>
+
+    <section id="profile-card" class="profile-panel" hidden aria-labelledby="pc-name">
+      <div class="pc-head">
+        <span id="pc-avatar" class="avatar avatar-xl"></span>
+        <div class="pc-ident">
+          <h2 id="pc-name"></h2>
+          <p id="pc-username" class="pc-username"></p>
+          <p id="pc-meta" class="pc-meta"></p>
+        </div>
+      </div>
+      <p id="pc-bio" class="pc-bio"></p>
+      <dl class="pc-facts">
+        <div><dt>Play style</dt><dd id="pc-style"></dd></div>
+        <div><dt>Bankroll</dt><dd id="pc-bank"></dd></div>
+        <div><dt>Member since</dt><dd id="pc-since"></dd></div>
+      </dl>
+      <div class="buttons pc-actions">
+        <button id="btn-edit-profile" class="btn btn-secondary" type="button">Edit profile</button>
+        <button id="btn-to-table" class="btn btn-primary" type="button">Back to the table</button>
+      </div>
+    </section>
+
+    <form id="profile-form" class="profile-panel profile-form" hidden novalidate>
+      <h2 id="pf-title">Create your profile</h2>
+      <p id="pf-intro" class="pf-intro">Pick a username and tell the table a little about yourself.</p>
+
+      <div class="pf-avatar-row">
+        <span id="pf-avatar" class="avatar avatar-xl"></span>
+        <p class="pf-hint">Your photo comes from your Google account.</p>
+      </div>
+
+      <label class="field">
+        <span>Display name</span>
+        <input id="pf-display" name="display_name" type="text" maxlength="50" autocomplete="name" required />
+      </label>
+
+      <label class="field">
+        <span>Username</span>
+        <div class="input-prefix"><span aria-hidden="true">@</span>
+          <input id="pf-username" name="username" type="text" maxlength="20" autocomplete="username"
+                 autocapitalize="none" spellcheck="false" required aria-describedby="pf-username-hint" />
+        </div>
+        <small id="pf-username-hint">3–20 characters: lowercase letters, numbers and underscores.</small>
+      </label>
+
+      <label class="field">
+        <span>Location <em>(optional)</em></span>
+        <input id="pf-location" name="location" type="text" maxlength="60" autocomplete="address-level2" />
+      </label>
+
+      <fieldset class="field">
+        <legend>Play style <em>(optional)</em></legend>
+        <div class="segmented">
+          <label><input type="radio" name="play_style" value="cautious" /><span>Cautious</span></label>
+          <label><input type="radio" name="play_style" value="balanced" /><span>Balanced</span></label>
+          <label><input type="radio" name="play_style" value="high_roller" /><span>High roller</span></label>
+        </div>
+      </fieldset>
+
+      <label class="field">
+        <span>Bio <em>(optional)</em></span>
+        <textarea id="pf-bio" name="bio" rows="3" maxlength="280"></textarea>
+        <small><span id="pf-bio-count">0</span>/280</small>
+      </label>
+
+      <p id="pf-error" class="pf-error" role="alert" hidden></p>
+
+      <div class="buttons">
+        <button id="pf-cancel" class="btn btn-ghost" type="button">Cancel</button>
+        <button id="pf-save" class="btn btn-primary" type="submit">Create profile</button>
+      </div>
+    </form>
+  </main>
+  </div>
+
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
   <script src="config.js"></script>
   <script src="app.js"></script>
+  <script src="profile.js"></script>
   <script src="auth.js"></script>
 </body>
 </html>
