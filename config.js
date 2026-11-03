@@ -7,6 +7,5 @@
  */
 window.BLACKJACK_CONFIG = {
   SUPABASE_URL: 'https://xpohmzyqtwqkwdmxgakg.supabase.co',
-  // Paste your publishable key (sb_publishable_...) or legacy anon key here:
-  SUPABASE_ANON_KEY: 'PASTE_YOUR_SUPABASE_PUBLISHABLE_KEY_HERE',
+  SUPABASE_ANON_KEY: 'sb_publishable_G37Id0WWYROe-fxb5yiv2w_AYzV8Xzz',
 };
