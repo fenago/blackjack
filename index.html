@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Blackjack</title>
+  <meta name="description" content="Play Blackjack in your browser, powered by the Deck of Cards API." />
+  <link rel="icon" href="https://deckofcardsapi.com/static/img/AS.png" />
+  <link rel="preconnect" href="https://deckofcardsapi.com" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <h1>Blackjack</h1>
+    <div class="stats">
+      <div class="stat"><span class="label">Bank</span><span id="bank" class="value">$1,000</span></div>
+      <div class="stat"><span class="label">Shoe</span><span id="shoe" class="value">—</span></div>
+    </div>
+  </header>
+
+  <main class="table">
+    <section class="area dealer-area" aria-label="Dealer">
+      <div class="area-head">
+        <h2>Dealer</h2>
+        <span id="dealer-total" class="total" hidden></span>
+      </div>
+      <div id="dealer-cards" class="cards"></div>
+    </section>
+
+    <div class="felt-line">
+      <span>Blackjack pays 3 to 2</span>
+      <small>Dealer stands on all 17s · Insurance pays 2 to 1</small>
+    </div>
+
+    <p id="message" class="message" role="status" aria-live="polite"></p>
+
+    <section class="area player-area" aria-label="Your hands">
+      <div id="hands" class="hands"></div>
+    </section>
+  </main>
+
+  <footer class="controls">
+    <!-- Betting -->
+    <div id="panel-bet" class="panel">
+      <div class="bet-display">
+        <span class="label">Bet</span>
+        <span id="bet" class="value">$0</span>
+      </div>
+      <div class="chips" role="group" aria-label="Add chips">
+        <button class="chip chip-5" data-chip="5" aria-label="Add $5">5</button>
+        <button class="chip chip-25" data-chip="25" aria-label="Add $25">25</button>
+        <button class="chip chip-100" data-chip="100" aria-label="Add $100">100</button>
+        <button class="chip chip-500" data-chip="500" aria-label="Add $500">500</button>
+      </div>
+      <div class="buttons">
+        <button id="btn-clear" class="btn btn-ghost">Clear</button>
+        <button id="btn-deal" class="btn btn-primary">Deal <kbd>Enter</kbd></button>
+        <button id="btn-rebuy" class="btn btn-primary" hidden>Rebuy $1,000</button>
+      </div>
+    </div>
+
+    <!-- Insurance -->
+    <div id="panel-insurance" class="panel" hidden>
+      <p class="prompt">Dealer shows an Ace. Take insurance for <strong id="ins-cost">$0</strong>?</p>
+      <div class="buttons">
+        <button id="btn-ins-no" class="btn btn-ghost">No thanks</button>
+        <button id="btn-ins-yes" class="btn btn-primary">Insure</button>
+      </div>
+    </div>
+
+    <!-- Player actions -->
+    <div id="panel-play" class="panel" hidden>
+      <div class="buttons actions">
+        <button id="btn-hit" class="btn btn-primary">Hit <kbd>H</kbd></button>
+        <button id="btn-stand" class="btn btn-primary">Stand <kbd>S</kbd></button>
+        <button id="btn-double" class="btn btn-secondary">Double <kbd>D</kbd></button>
+        <button id="btn-split" class="btn btn-secondary">Split <kbd>P</kbd></button>
+      </div>
+    </div>
+
+    <p class="credit">Cards dealt live by <a href="https://deckofcardsapi.com/" target="_blank" rel="noopener">Deck of Cards API</a> · 6-deck shoe</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
