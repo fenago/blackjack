@@ -1,7 +1,7 @@
 # Blackjack
 
 A browser Blackjack game that deals real cards from the free [Deck of Cards API](https://deckofcardsapi.com/).
-Plain HTML, CSS and JavaScript — no build step, no dependencies.
+Plain HTML, CSS and JavaScript — no build step. Google sign-in uses Supabase Auth (`@supabase/supabase-js` from the jsDelivr CDN).
 
 ## How it uses the API
 
@@ -13,6 +13,17 @@ Plain HTML, CSS and JavaScript — no build step, no dependencies.
 | Card images | `card.images.png`, face-down card `static/img/back.png` |
 
 If a saved deck has expired (the API discards decks idle for two weeks), the game opens a new shoe automatically.
+
+## Google sign-in (Supabase)
+
+Players sign in with Google through Supabase Auth before they reach the table. Once signed in, they're greeted by first name with their Google profile photo, and each account keeps its own bankroll.
+
+Setup checklist:
+
+1. **`config.js`**: paste your project's publishable key (`sb_publishable_...`) or legacy anon key into `SUPABASE_ANON_KEY` (Supabase → Project Settings → API Keys). This key is meant to be public.
+2. **Supabase → Authentication → Sign In / Providers → Google**: enabled, with your Google OAuth client ID and secret.
+3. **Google Cloud Console → OAuth client → Authorized redirect URIs**: `https://xpohmzyqtwqkwdmxgakg.supabase.co/auth/v1/callback`
+4. **Supabase → Authentication → URL Configuration**: set **Site URL** to your Netlify URL (e.g. `https://your-site.netlify.app`) and add it under **Redirect URLs**. Add `http://localhost:8000/` too if you test locally.
 
 ## Rules
 

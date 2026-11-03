@@ -17,6 +17,7 @@
   const MIN_BET = 5;
   const MAX_HANDS = 4;
   const STORAGE_KEY = 'blackjack.v1';
+  let storageKey = STORAGE_KEY;
   const DEAL_DELAY = 320;
 
   // ---------- State ----------
@@ -43,7 +44,7 @@
   // ---------- Persistence ----------
   function load() {
     try {
-      const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
+      const saved = JSON.parse(localStorage.getItem(storageKey) || 'null');
       if (saved) {
         if (typeof saved.bank === 'number' && saved.bank >= 0) state.bank = saved.bank;
         if (typeof saved.deckId === 'string') state.deckId = saved.deckId;
@@ -55,7 +56,7 @@
 
   function save() {
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify({
+      localStorage.setItem(storageKey, JSON.stringify({
         bank: state.bank,
         deckId: state.deckId,
         remaining: state.remaining,
@@ -630,6 +631,7 @@
   el.insNo.addEventListener('click', () => answerInsurance(false));
 
   document.addEventListener('keydown', (e) => {
+    if (!started) return;
     if (e.metaKey || e.ctrlKey || e.altKey) return;
     if (e.target instanceof HTMLButtonElement && (e.key === 'Enter' || e.key === ' ')) return;
     const key = e.key.toLowerCase();
@@ -643,9 +645,26 @@
   });
 
   // ---------- Boot ----------
-  load();
-  preload(CARD_BACK);
-  state.bet = state.lastBet && state.lastBet <= state.bank ? state.lastBet : 0;
-  setMessage('Place your bet and press Deal.');
-  render();
+  // auth.js calls start() once a player signs in; each Google account keeps its own bank.
+  let started = false;
+
+  function start(userId) {
+    storageKey = `${STORAGE_KEY}.${userId}`;
+    Object.assign(state, {
+      bank: STARTING_BANK, deckId: null, remaining: null, bet: 0, lastBet: 0,
+      phase: 'betting', hands: [], active: 0, dealer: { cards: [], hidden: true },
+      insurance: 0, busy: false,
+    });
+    clearTable();
+    load();
+    preload(CARD_BACK);
+    state.bet = state.lastBet && state.lastBet <= state.bank ? state.lastBet : 0;
+    setMessage('Place your bet and press Deal.');
+    started = true;
+    render();
+  }
+
+  function stop() { started = false; }
+
+  window.Blackjack = { start, stop };
 })();
